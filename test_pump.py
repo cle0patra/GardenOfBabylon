@@ -8,6 +8,10 @@ from dateutil import tz
 import datetime
 import time
 
+#======================================================
+#  class Pump:
+#	@note: Pumps at 100ml/125s at max speed (255)
+#======================================================
 class Pump:
 	def __init__(self):
 		self.pump = serial.Serial('/dev/ttyACM1',9600)
