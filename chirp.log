@@ -1,0 +1,10 @@
+ERROR:root:Caught Error: Expecting : delimiter: line 1 column 6 (char 5), Retrying....
+INFO:urllib3.connectionpool:Starting new HTTPS connection (1): api.thingspeak.com
+INFO:root:Status Code: 200, 
+Stats: {u'capacitance': 372, u'temperature_farenheit': 75.2, u'light': 3021, u'temperature_celsius': 24.0, u'humidity': 18.0}
+INFO:urllib3.connectionpool:Starting new HTTPS connection (1): api.thingspeak.com
+INFO:root:Status Code: 200, 
+Stats: {u'capacitance': 372, u'temperature_farenheit': 77.0, u'light': 2988, u'temperature_celsius': 25.0, u'humidity': 17.0}
+INFO:urllib3.connectionpool:Starting new HTTPS connection (1): api.thingspeak.com
+INFO:root:Status Code: 200, 
+Stats: {u'capacitance': 373, u'temperature_farenheit': 77.0, u'light': 2998, u'temperature_celsius': 25.0, u'humidity': 17.0}

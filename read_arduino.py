@@ -1,12 +1,16 @@
 #!/usr/bin/python
 
 import serial
+from serial.serialutil import SerialException
 import json
 import requests
+import time
+import logging
 
 class Chirp:
 	def __init__(self):
-		self.ser = serial.Serial('/dev/ttyACM0',9600)
+		self.chirp = serial.Serial("/dev/ttyACM0",9600)
+		#self.confirm_identity()
 		self.stats = {}
 		# ThingSpeak API key
 		self.api_key = "PRJUFK9AY5XJPU22"
@@ -20,9 +24,10 @@ class Chirp:
 			"capacitance" : "field4", \
 			"light" : "field5" \
 		}
+		logging.basicConfig(filename="chirp.log", filemode="w",level=logging.INFO)
 	def parse(self):
 		try:
-			serial_input = self.ser.readline().strip()
+			serial_input = self.chirp.readline().strip()
 			self.stats = json.loads(serial_input.replace("\\",r"\\"))
 			# sanity checking
 			try:
@@ -42,17 +47,28 @@ class Chirp:
 				# Make sure all keys are present
 				for key in self.channels.keys(): self.stats[key]
 			except KeyError as k:
-				print "Data came in truncated: ",k	
+				logging.warning("Data came in truncated: %s " % (k,))	
 				self.parse() 
 			except Exception as e:
-				print "unknown error in parse(): ",e
+				logging.error("unknown error in parse(): %s " % (e,))
 		except ValueError as e:
-			print "Caught Error: ",e,"\n Retrying...."
+			logging.error("Caught Error: %s, Retrying...." % (e,))
 			self.parse()
+		except SerialException:
+			logging.warning("Caught Serial exception trying to read from device, perhaps another is trying to confirm identity")
+			time.sleep(10)
+			self.parse()
+		except Exception as e:
+			logging.critical("Unknown error in %s, %s Exiting..." % (self.parse.__name__,e,))
+			exit
 	def post_stats(self):
 		# After setting the Chirp, first read of capacitance is almost always -1
 		# skip post if this is the case
-		if self.stats['capacitance'] == -1 or self.stats['light'] == -1:
+		try:
+			if self.stats['capacitance'] == -1 or self.stats['light'] == -1:
+				return
+		except KeyError:
+			logging.error("Key Error in %s, take no action" % (self.post_stats.__name__,))
 			return
 
 		body = []
@@ -61,8 +77,7 @@ class Chirp:
 				body.append("%s=%s" % (self.channels[key],self.stats[key],))
 		body = "&".join(body)
 	        req = requests.post(url=self.update_url,data=body)
-		print self.stats
-		print "Status Code: %d" % req.status_code	
+		logging.info("Status Code: %d, \nStats: %s" % (req.status_code,self.stats,))
 
 	def get_stats(self):
 		return str(self.stats)
