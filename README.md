@@ -1,3 +1,3 @@
 # GardenOfBabylon
 
-bleh
+Automated watering project
