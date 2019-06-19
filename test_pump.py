@@ -7,6 +7,7 @@ import iso8601
 from dateutil import tz
 import datetime
 import time
+import os
 import logging
 
 #======================================================
@@ -16,13 +17,13 @@ import logging
 class Pump:
 	def __init__(self):
 		self.pump = serial.Serial("/dev/ttyACM1",9600)
-		self.api_key = "UUSBYI66V3MBTS3Q"
+		self.api_key = os.env["THING_SPEAK_API_KEY"]
 		self.sample_size = 5 # To average over
 		self.stats = {}
 		self.threshold = 275 # Capacitance threshold for watering, 90% dry
 		self.target = 350 # Target capacitance after watering
 		# ThingSpeak API key
-                self.update_api_key = "PRJUFK9AY5XJPU22"
+                self.update_api_key = os.env["THING_SPEAK_UPDATE_API_KEY"]
                 # ThingSpeak update URL
                 self.update_url = "https://api.thingspeak.com/update.json"
 		logging.basicConfig(filename="pump.log",filemode="w",level=logging.INFO)
