@@ -6,6 +6,7 @@ import json
 import requests
 import time
 import logging
+import os
 
 class Chirp:
 	def __init__(self):
@@ -13,7 +14,7 @@ class Chirp:
 		#self.confirm_identity()
 		self.stats = {}
 		# ThingSpeak API key
-		self.api_key = "PRJUFK9AY5XJPU22"
+		self.api_key = os.env["THING_SPEAK_API_KEY"]
 		# ThingSpeak update URL
 		self.update_url = "https://api.thingspeak.com/update.json"
 		# ThingSpeak Channels
